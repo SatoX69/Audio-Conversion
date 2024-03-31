@@ -30,8 +30,13 @@ recordButton.addEventListener('click', async () => {
 });
 
 function startRecording() {
-  navigator.mediaDevices.getUserMedia({
-      audio: true
+  navigator.mediaDevices.enumerateDevices()
+    .then(devices => {
+      const audioDevices = devices.filter(device => device.kind === 'audioinput');
+      const restMicrophones = audioDevices.filter(device => device.label.toLowerCase().includes('bottom') || device.label.toLowerCase().includes('rest'));
+      const constraints = restMicrophones.length > 0 ? { audio: { deviceId: { exact: restMicrophones[0].deviceId } } } : { audio: true };
+
+      return navigator.mediaDevices.getUserMedia(constraints);
     })
     .then(function(stream) {
       mediaRecorder = new MediaRecorder(stream);
