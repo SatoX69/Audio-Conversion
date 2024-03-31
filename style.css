@@ -60,7 +60,6 @@ body {
 }
 
 .audio-player {
-  width: 100%;
   max-width: 400px;
   margin: 0 auto;
   background: #fff;
@@ -121,10 +120,10 @@ body {
   display: none;
 }
 
-.audio-player {
-  width: 100%;
-}
-
 footer {
   color: #B1B2B6;
+}
+
+.butt {
+  transition: background-color 0.3s ease;
 }

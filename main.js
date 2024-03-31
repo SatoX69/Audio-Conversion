@@ -20,23 +20,24 @@ const responseAudioDiv = document.getElementById('response-audio');
 const uploadInput = document.getElementById('upload-input');
 
 recordButton.addEventListener('click', async () => {
-  if (recordButton.textContent === 'Record Audio') {
-    startRecording();
-    await new Promise(res => setTimeout(res, 10000));
-    stopRecording();
-  } else {
-    stopRecording();
+  if (!recordButton.disabled) {
+    recordButton.disabled = true;
+    recordButton.style.backgroundColor = 'gray';
+    if (recordButton.textContent === 'Record Audio') {
+      startRecording();
+      await new Promise(res => setTimeout(res, 10000));
+      stopRecording();
+    } else {
+      stopRecording();
+    }
+    recordButton.disabled = false;
+    recordButton.style.backgroundColor = '';
   }
 });
 
 function startRecording() {
-  navigator.mediaDevices.enumerateDevices()
-    .then(devices => {
-      const audioDevices = devices.filter(device => device.kind === 'audioinput');
-      const restMicrophones = audioDevices.filter(device => device.label.toLowerCase().includes('bottom') || device.label.toLowerCase().includes('rest'));
-      const constraints = restMicrophones.length > 0 ? { audio: { deviceId: { exact: restMicrophones[0].deviceId } } } : { audio: true };
-
-      return navigator.mediaDevices.getUserMedia(constraints);
+  navigator.mediaDevices.getUserMedia({
+      audio: true
     })
     .then(function(stream) {
       mediaRecorder = new MediaRecorder(stream);
