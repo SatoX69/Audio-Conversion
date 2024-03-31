@@ -20,25 +20,20 @@ const responseAudioDiv = document.getElementById('response-audio');
 const uploadInput = document.getElementById('upload-input');
 
 recordButton.addEventListener('click', async () => {
-  if (!recordButton.disabled) {
-    recordButton.disabled = true;
-    recordButton.style.backgroundColor = 'gray';
-    if (recordButton.textContent === 'Record Audio') {
-      startRecording();
-      await new Promise(res => setTimeout(res, 10000));
-      stopRecording();
-    } else {
-      stopRecording();
-    }
-    recordButton.disabled = false;
-    recordButton.style.backgroundColor = '';
+  if (recordButton.textContent === 'Record Audio') {
+    startRecording();
+    recordButton.style.backgroundColor = "gray";
+    await new Promise(res => setTimeout(res, 10000));
+    stopRecording();
+    recordButton.style.backgroundColor = "#4CAF50";
+  } else {
+    stopRecording();
+    recordButton.style.backgroundColor = "#4CAF50";
   }
 });
 
 function startRecording() {
-  navigator.mediaDevices.getUserMedia({
-      audio: true
-    })
+  navigator.mediaDevices.getUserMedia({ audio: true })
     .then(function(stream) {
       mediaRecorder = new MediaRecorder(stream);
       recordingIndicator.style.display = 'block';
@@ -50,9 +45,7 @@ function startRecording() {
       mediaRecorder.onstop = function(e) {
         recordingIndicator.style.display = 'none';
         recordButton.textContent = 'Record Audio';
-        const blob = new Blob(chunks, {
-          'type': 'audio/webm;codecs=opus'
-        });
+        const blob = new Blob(chunks, { 'type': 'audio/webm;codecs=opus' });
         const reader = new FileReader();
         reader.onload = function(event) {
           sendAudio(event.target.result);
@@ -62,7 +55,7 @@ function startRecording() {
       mediaRecorder.start();
     })
     .catch(function(err) {
-      err()
+      handleError();
       console.log('Error: ' + err);
     });
 }
@@ -82,10 +75,10 @@ function sendAudio(arrayBuffer) {
       responseAudioDiv.style.display = 'block';
       const audioUrl = URL.createObjectURL(blob);
       audioPlayer.src = audioUrl;
-      alert("Conversion Done")
+      alert("Conversion Done");
     })
     .catch(error => {
-      err()
+      handleError();
       console.error('Error:', error);
     });
 }
@@ -99,6 +92,6 @@ uploadInput.addEventListener('change', (event) => {
   reader.readAsArrayBuffer(file);
 });
 
-function err() {
-  alert("An Error Occured, Check console")
+function handleError() {
+  alert("An Error Occurred, Check console");
 }
