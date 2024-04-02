@@ -7,6 +7,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: all 0.2 ease;
 }
 
 .header {
@@ -66,6 +67,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .upload-container {
@@ -124,6 +126,6 @@ footer {
   color: #B1B2B6;
 }
 
-.butt {
-  transition: background-color 0.3s ease;
+.button {
+  transition: all 0.2s ease-in-out;
 }

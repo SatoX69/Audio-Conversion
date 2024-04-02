@@ -82,15 +82,42 @@ async function sendAudio(arrayBuffer) {
     recordButton.textContent = "Processing..."
     uploadInput.style.backgroundColor = "gray"
     recordButton.style.backgroundColor = "gray";
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: headers,
-      body: arrayBuffer
-    });
-    const blob = await response.blob();
+
+    const CHUNK_SIZE = 10 * 1000; // 10 seconds in milliseconds
+    const arrayBufferLength = arrayBuffer.byteLength;
+
+    if (arrayBufferLength <= CHUNK_SIZE) {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: arrayBuffer
+      });
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      audioPlayer.src = audioUrl;
+    } else {
+      const chunkCount = Math.ceil(arrayBufferLength / CHUNK_SIZE);
+      let audioChunks = [];
+      for (let i = 0; i < chunkCount; i++) {
+        await new Promise(x => {setTimeout(x, 2000)})
+        const start = i * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, arrayBufferLength);
+        const chunk = arrayBuffer.slice(start, end);
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: headers,
+          body: chunk
+        });
+        const chunkBlob = await response.blob();
+        audioChunks.push(chunkBlob);
+      }
+      const blob = new Blob(audioChunks);
+      const audioUrl = URL.createObjectURL(blob);
+      audioPlayer.src = audioUrl;
+    }
+
     responseAudioDiv.style.display = 'block';
-    const audioUrl = URL.createObjectURL(blob);
-    audioPlayer.src = audioUrl;
   } catch (error) {
     recordButton.style.backgroundColor = "red";
     handleError();
@@ -103,7 +130,6 @@ async function sendAudio(arrayBuffer) {
     recordButton.textContent = "Record Audio"
   }
 }
-
 
 uploadInput.addEventListener('change', (event) => {
   if (process) return
