@@ -63,9 +63,9 @@ body {
 .audio-player {
   max-width: 400px;
   margin: 0 auto;
-  background: #fff;
+  background-color: #FFFFFF;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
